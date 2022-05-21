@@ -1,5 +1,6 @@
 from tkinter import (ttk,Tk,PhotoImage,Canvas, filedialog, colorchooser,RIDGE,
-                     GROOVE,ROUND,Scale,HORIZONTAL)
+                     GROOVE,RAISED,ROUND,Scale,HORIZONTAL)
+import tkinter as tk
 import cv2
 from PIL import ImageTk, Image
 import numpy as np
@@ -11,67 +12,86 @@ class FrontEnd:
         
     def menu_initialisation(self):
         self.master.geometry('750x630+250+10')
-        self.master.title('Photo Editing App with Python (Tkinter and OpenCV)')
+        self.master.title('Ứng dụng chỉnh sửa ảnh (Tkinter and OpenCV)')
         
         self.frame_header = ttk.Frame(self.master)
         self.frame_header.pack()
         
-        self.logo = PhotoImage(file='logo1.png').subsample(2, 2)
-        print(self.logo)
-        ttk.Label(self.frame_header, image=self.logo).grid(
-            row=0, column=0, rowspan=2)
-        ttk.Label(self.frame_header, text='PhotoHub').grid(
-            row=0, column=2, columnspan=1)
-        ttk.Label(self.frame_header, text='An Image Editor Just For You!').grid(
-            row=1, column=1, columnspan=3)
+        self.logo1 = PhotoImage(file='logo1.png').subsample(2, 2)
+        self.logo2 = PhotoImage(file='logo2.png').subsample(2, 2)
+        
+        
+        
+        # print(self.logo)
+        ttk.Label(self.frame_header, text='Sinh viên',font=('bold',11)).grid(
+            row=0, column=0, columnspan=6)
+        ttk.Label(self.frame_header, image=self.logo1).grid(
+            row=1, column=0, rowspan=2)
+        ttk.Label(self.frame_header, image=self.logo2).grid(
+            row=1, column=1, rowspan=2)
+        ttk.Label(self.frame_header, text='Cáp Văn Đức').grid(
+            row=2, column=0, columnspan=1)
+        ttk.Label(self.frame_header, text='Nguyễn Sơn Hải').grid(
+            row=2, column=1, columnspan=3)
         
         
         self.frame_menu = ttk.Frame(self.master)
         self.frame_menu.pack()
         self.frame_menu.config(relief=RIDGE, padding=(50, 15))
         
+        
+        upload_icon = tk.PhotoImage(file='./assets/upload.png')
+        style = ttk.Style()
+        
+        style.configure('Custom.TLabel', font =
+               ('calibri', 10, 'bold',),
+                foreground = 'black',borderwidth = '4',background = 'lightblue',relief = "raised",padding=[5, 5, 5, 5])
+        
+        style.map('Custom.TLabel', foreground = [('active', '!disabled', 'green')],
+                     background = [('active', 'yellow')])
+
         ttk.Button(
-            self.frame_menu, text="Upload An Image", command=self.upload_action).grid(
+            self.frame_menu, image=upload_icon,text="Upload An Image",style = 'Custom.TLabel',compound=tk.LEFT, command=self.upload_action).grid(
             row=0, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Crop Image", command=self.crop_action).grid(
+            self.frame_menu, text="Crop Image",style = 'Custom.TLabel', command=self.crop_action).grid(
             row=1, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Add Text", command=self.text_action_1).grid(
+            self.frame_menu, text="Add Text",style = 'Custom.TLabel', command=self.text_action_1).grid(
             row=2, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Draw Over Image", command=self.draw_action).grid(
+            self.frame_menu, text="Draw Over Image",style = 'Custom.TLabel', command=self.draw_action).grid(
             row=3, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Apply Filters", command=self.filter_action).grid(
+            self.frame_menu, text="Apply Filters",style = 'Custom.TLabel', command=self.filter_action).grid(
             row=4, column=0, columnspan=2,  padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Blur/Smoothening", command=self.blur_action).grid(
+            self.frame_menu, text="Blur/Smoothening",style = 'Custom.TLabel', command=self.blur_action).grid(
             row=5, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Adjust Levels", command=self.adjust_action).grid(
+            self.frame_menu, text="Adjust Levels",style = 'Custom.TLabel', command=self.adjust_action).grid(
             row=6, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Rotate", command=self.rotate_action).grid(
+            self.frame_menu, text="Rotate",style = 'Custom.TLabel', command=self.rotate_action).grid(
             row=7, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Flip", command=self.flip_action).grid(
+            self.frame_menu, text="Flip", style = 'Custom.TLabel',command=self.flip_action).grid(
             row=8, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.frame_menu, text="Save As", command=self.save_action).grid(
+            self.frame_menu, text="Save As", style = 'Custom.TLabel',command=self.save_action).grid(
             row=9, column=0, columnspan=2, padx=5, pady=5, sticky='sw')
         
-        self.canvas = Canvas(self.frame_menu, bg="gray", width=300, height=400)
-        self.canvas.grid(row=0, column=3, rowspan=10)
+        self.canvas = Canvas(self.frame_menu, bg="lightblue", width=400, height=400)
+        self.canvas.grid(row=0, column=3, rowspan=10,padx=20)
         
         self.side_frame = ttk.Frame(self.frame_menu)
         self.side_frame.grid(row=0, column=4, rowspan=10)
@@ -79,16 +99,16 @@ class FrontEnd:
         
         self.apply_and_cancel = ttk.Frame(self.master)
         self.apply_and_cancel.pack()
-        self.apply = ttk.Button(self.apply_and_cancel, text="Apply", command=self.apply_action).grid(
-            row=0, column=0, columnspan=1, padx=5, pady=5, sticky='sw')
+        self.apply = ttk.Button(self.apply_and_cancel, text="Apply",style = 'Custom.TLabel', command=self.apply_action).grid(
+            row=0, column=0, columnspan=1, padx=5, pady=10, sticky='sw')
 
         ttk.Button(
-            self.apply_and_cancel, text="Cancel", command=self.cancel_action).grid(
-                row=0, column=1, columnspan=1,padx=5, pady=5, sticky='sw')
+            self.apply_and_cancel, text="Cancel",style = 'Custom.TLabel', command=self.cancel_action).grid(
+                row=0, column=1, columnspan=1,padx=5, pady=10, sticky='sw')
 
         ttk.Button(
-            self.apply_and_cancel, text="Revert All Changes", command=self.revert_action).grid(
-                row=0, column=2, columnspan=1,padx=5, pady=5, sticky='sw')
+            self.apply_and_cancel, text="Revert All Changes",style = 'Custom.TLabel', command=self.revert_action).grid(
+                row=0, column=2, columnspan=1,padx=5, pady=10, sticky='sw')
         
 
         
@@ -105,11 +125,11 @@ class FrontEnd:
         self.text_extracted = "hello"
         self.refresh_side_frame()
         ttk.Label(
-            self.side_frame, text="Enter the text").grid(row=0, column=2, padx=5, pady=5, sticky='se')
+            self.side_frame, text="Enter the text",font = ('bold',11)).grid(row=0, column=2, padx=5, pady=5, sticky='se')
         self.text_on_image = ttk.Entry(self.side_frame)
         self.text_on_image.grid(row=1, column=2, padx=5, sticky='se')
         ttk.Button(
-            self.side_frame, text="Pick A Font Color", command=self.choose_color).grid(
+            self.side_frame, text="Pick A Font Color",style = 'Custom.TLabel', command=self.choose_color).grid(
             row=2, column=2, padx=5, pady=5, sticky='se')
         self.text_action()
 
@@ -216,7 +236,7 @@ class FrontEnd:
         self.canvas.bind("<ButtonPress>", self.start_draw)
         self.canvas.bind("<B1-Motion>", self.draw)
         self.draw_color_button = ttk.Button(
-            self.side_frame, text="Pick A Color", command=self.choose_color)
+            self.side_frame, text="Pick A Color",style = 'Custom.TLabel', command=self.choose_color)
         self.draw_color_button.grid(
             row=0, column=2, padx=5, pady=5, sticky='sw')
 
@@ -258,39 +278,39 @@ class FrontEnd:
     def filter_action(self):
         self.refresh_side_frame()
         ttk.Button(
-            self.side_frame, text="Negative", command=self.negative_action).grid(
+            self.side_frame, text="Negative",style = 'Custom.TLabel', command=self.negative_action).grid(
             row=0, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Black And white", command=self.bw_action).grid(
+            self.side_frame, text="Black And white",style = 'Custom.TLabel', command=self.bw_action).grid(
             row=1, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Stylisation", command=self.stylisation_action).grid(
+            self.side_frame, text="Stylisation",style = 'Custom.TLabel', command=self.stylisation_action).grid(
             row=2, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Sketch Effect", command=self.sketch_action).grid(
+            self.side_frame, text="Sketch Effect",style = 'Custom.TLabel', command=self.sketch_action).grid(
             row=3, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Emboss", command=self.emb_action).grid(
+            self.side_frame, text="Emboss",style = 'Custom.TLabel', command=self.emb_action).grid(
             row=4, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Sepia", command=self.sepia_action).grid(
+            self.side_frame, text="Sepia",style = 'Custom.TLabel', command=self.sepia_action).grid(
             row=5, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Binary Thresholding", command=self.binary_threshold_action).grid(
+            self.side_frame, text="Binary Thresholding",style = 'Custom.TLabel', command=self.binary_threshold_action).grid(
             row=6, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Erosion", command=self.erosion_action).grid(
+            self.side_frame, text="Erosion",style = 'Custom.TLabel', command=self.erosion_action).grid(
             row=7, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Dilation", command=self.dilation_action).grid(
+            self.side_frame, text="Dilation",style = 'Custom.TLabel', command=self.dilation_action).grid(
             row=8, column=2, padx=5, pady=5, sticky='se')
     
     def blur_action(self):
@@ -321,22 +341,22 @@ class FrontEnd:
     def rotate_action(self):
         self.refresh_side_frame()
         ttk.Button(
-            self.side_frame, text="Rotate Left", command=self.rotate_left_action).grid(
+            self.side_frame, text="Rotate Left",style = 'Custom.TLabel', command=self.rotate_left_action).grid(
             row=0, column=2, padx=5, pady=5, sticky='sw')
 
         ttk.Button(
-            self.side_frame, text="Rotate Right", command=self.rotate_right_action).grid(
+            self.side_frame, text="Rotate Right",style = 'Custom.TLabel', command=self.rotate_right_action).grid(
             row=1, column=2, padx=5, pady=5, sticky='sw')
 
     
     def flip_action(self):
         self.refresh_side_frame()
         ttk.Button(
-            self.side_frame, text="Vertical Flip", command=self.vertical_action).grid(
+            self.side_frame, text="Vertical Flip",style = 'Custom.TLabel', command=self.vertical_action).grid(
             row=0, column=2, padx=5, pady=5, sticky='se')
 
         ttk.Button(
-            self.side_frame, text="Horizontal Flip", command=self.horizontal_action).grid(
+            self.side_frame, text="Horizontal Flip",style = 'Custom.TLabel', command=self.horizontal_action).grid(
             row=1, column=2, padx=5, pady=5, sticky='se')
     
     def adjust_action(self):
